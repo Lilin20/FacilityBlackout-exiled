@@ -36,38 +36,66 @@ namespace FacilityBlackout
 
         public IEnumerator<float> BlackoutCoroutine()
         {
-            while (_blackoutCount <= FacilityBlackout.Instance.Config.BlackoutAmount)
+            while (_blackoutCount <= FacilityBlackout.Instance.Config.BlackoutAmount - 1)
             {
                 //yield return Timing.WaitForSeconds(EarlyGameTweaks.Instance.Config.BlackoutStartDelay);
 
                 Random random = new Random();
 
                 int randomAdditionalDelay = random.Next(FacilityBlackout.Instance.Config.BlackoutMinDelay, FacilityBlackout.Instance.Config.BlackoutMaxDelay + 1);
-                int randomZoneIndex = random.Next(FacilityBlackout.Instance.Config.BlackoutZones.Count);
+                int ZoneIndex = 0;
+
+                if (FacilityBlackout.Instance.Config.BlackoutRandomZones)
+                {
+                    ZoneIndex = random.Next(FacilityBlackout.Instance.Config.BlackoutZones.Count);
+                }
 
                 float cassieTime = Cassie.CalculateDuration(FacilityBlackout.Instance.Config.BlackoutCassie, false, 1);
 
                 if (_firstBlackoutFired)
                 {
-                    Timing.WaitForSeconds(FacilityBlackout.Instance.Config.BlackoutDelayBetween);
-                    Log.Info($"Additional Delay: {randomAdditionalDelay}, Zone: {FacilityBlackout.Instance.Config.BlackoutZones[randomZoneIndex]}");
+                    yield return Timing.WaitForSeconds(FacilityBlackout.Instance.Config.BlackoutDelayBetween);
+                    Log.Info($"Additional Delay: {randomAdditionalDelay} until Blackout");
 
                     yield return Timing.WaitForSeconds(randomAdditionalDelay);
                     Cassie.Message(FacilityBlackout.Instance.Config.BlackoutCassie, false, false, true);
 
                     yield return Timing.WaitForSeconds(cassieTime);
-                    // Check for lightcontainment decontamination timer
-                    Map.TurnOffAllLights(FacilityBlackout.Instance.Config.BlackoutTime, FacilityBlackout.Instance.Config.BlackoutZones[randomZoneIndex]);
+
+                    if (FacilityBlackout.Instance.Config.BlackoutRandomZones)
+                    {
+                        Map.TurnOffAllLights(FacilityBlackout.Instance.Config.BlackoutTime, FacilityBlackout.Instance.Config.BlackoutZones[ZoneIndex]);
+                    }
+                    else
+                    {
+                        foreach (ZoneType zoneType in FacilityBlackout.Instance.Config.BlackoutZones)
+                        {
+                            Log.Info($"Blackout Zone: {zoneType}");
+                            Map.TurnOffAllLights(FacilityBlackout.Instance.Config.BlackoutTime, zoneType);
+                        }
+                    }
                     _blackoutCount++;
                 }
-                Log.Info($"Additional Delay: {randomAdditionalDelay}, Zone: {FacilityBlackout.Instance.Config.BlackoutZones[randomZoneIndex]}");
+                Log.Info($"Additional Delay: {randomAdditionalDelay} until Blackout");
 
                 yield return Timing.WaitForSeconds(randomAdditionalDelay);
                 Cassie.Message(FacilityBlackout.Instance.Config.BlackoutCassie, false, false, true);
 
                 yield return Timing.WaitForSeconds(cassieTime);
-                // Check for lightcontainment decontamination timer
-                Map.TurnOffAllLights(FacilityBlackout.Instance.Config.BlackoutTime, FacilityBlackout.Instance.Config.BlackoutZones[randomZoneIndex]);
+
+                if (FacilityBlackout.Instance.Config.BlackoutRandomZones)
+                {
+                    Map.TurnOffAllLights(FacilityBlackout.Instance.Config.BlackoutTime, FacilityBlackout.Instance.Config.BlackoutZones[ZoneIndex]);
+                }
+                else
+                {
+                    foreach (ZoneType zoneType in FacilityBlackout.Instance.Config.BlackoutZones)
+                    {
+                        Log.Info($"Blackout Zone: {zoneType}");
+                        Map.TurnOffAllLights(FacilityBlackout.Instance.Config.BlackoutTime, zoneType);
+                    }
+                }
+                _firstBlackoutFired = true;
                 _blackoutCount++;
             }
         }
