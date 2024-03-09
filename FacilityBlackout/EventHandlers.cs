@@ -55,7 +55,7 @@ namespace FacilityBlackout
                 if (_firstBlackoutFired)
                 {
                     yield return Timing.WaitForSeconds(FacilityBlackout.Instance.Config.BlackoutDelayBetween);
-                    Log.Info($"Additional Delay: {randomAdditionalDelay} until Blackout");
+                    Log.Debug($"Additional Delay: {randomAdditionalDelay} until Blackout");
 
                     yield return Timing.WaitForSeconds(randomAdditionalDelay);
                     Cassie.Message(FacilityBlackout.Instance.Config.BlackoutCassie, false, false, true);
@@ -70,13 +70,13 @@ namespace FacilityBlackout
                     {
                         foreach (ZoneType zoneType in FacilityBlackout.Instance.Config.BlackoutZones)
                         {
-                            Log.Info($"Blackout Zone: {zoneType}");
+                            Log.Debug($"Blackout Zone: {zoneType}");
                             Map.TurnOffAllLights(FacilityBlackout.Instance.Config.BlackoutTime, zoneType);
                         }
                     }
                     _blackoutCount++;
                 }
-                Log.Info($"Additional Delay: {randomAdditionalDelay} until Blackout");
+                Log.Debug($"Additional Delay: {randomAdditionalDelay} until Blackout");
 
                 yield return Timing.WaitForSeconds(randomAdditionalDelay);
                 Cassie.Message(FacilityBlackout.Instance.Config.BlackoutCassie, false, false, true);
@@ -91,7 +91,7 @@ namespace FacilityBlackout
                 {
                     foreach (ZoneType zoneType in FacilityBlackout.Instance.Config.BlackoutZones)
                     {
-                        Log.Info($"Blackout Zone: {zoneType}");
+                        Log.Debug($"Blackout Zone: {zoneType}");
                         Map.TurnOffAllLights(FacilityBlackout.Instance.Config.BlackoutTime, zoneType);
                     }
                 }

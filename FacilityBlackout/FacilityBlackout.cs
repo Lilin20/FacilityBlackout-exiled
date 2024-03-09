@@ -1,14 +1,22 @@
 ﻿using Exiled.API.Enums;
 using Exiled.API.Features;
 using Exiled;
+using System;
 
 namespace FacilityBlackout
 {
     public class FacilityBlackout : Plugin<Config>
     {
+        public override string Name { get; } = "Facility Blackout";
+        public override string Author { get; } = "Lilin";
+        public override Version Version { get; } = new Version(1, 0, 0);
+        public override string Prefix { get; } = "FacilityBlackout";
+        public override PluginPriority Priority { get; } = PluginPriority.Default;
+
+
+
         public static FacilityBlackout Instance { get; } = new FacilityBlackout();
         private FacilityBlackout() { }
-        public override PluginPriority Priority { get; } = PluginPriority.Default;
         public EventHandlers EventHandlers;
 
         public override void OnEnabled()
