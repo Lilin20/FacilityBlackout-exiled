@@ -21,19 +21,34 @@ A plugin for EXILED to create timed blackouts. This is my very first real plugin
 | BlackoutMaxDelay | integer | 300 | Maximum delay between blackout events. |
 | BlackoutTime | integer | 20 | Duration of each blackout event. |
 | BlackoutCassie | string | "LIGHT SYSTEM MALFUNCTION . REPAIRING SYSTEMS" | Cassie announcement during blackout. |
+| BlackoutRandomZones | bool | true | If true, a random zone will be picked from the list. If false, all zones from this list will blackout. |
+| BlackoutRandomZonesAmount | int | 1 | Does not work in this release. |
 | BlackoutZones | list | Entrance, LightContainment, HeavyContainment, Surface | Zones affected by blackout. |
 
 # Config Example
 ```yml
+facility_blackout:
   is_enabled: true
   debug: false
-  blackout_amount: 3
-  blackout_delay_between: 120
-  blackout_start_delay: 60
-  blackout_min_delay: 120
-  blackout_max_delay: 300
-  blackout_time: 20
+  # Number of total blackouts per round.
+  blackout_amount: 5
+  # Additional delay between each blackout.
+  blackout_delay_between: 150
+  # Delay before the first blackout occurs.
+  blackout_start_delay: 10
+  # Minimum delay until next blackout events.
+  blackout_min_delay: 30
+  # Maximum delay until next blackout events.
+  blackout_max_delay: 1200
+  # Duration of each blackout event.
+  blackout_time: 60
+  # Cassie announcement during blackout.
   blackout_cassie: 'LIGHT SYSTEM MALFUNCTION . REPAIRING SYSTEMS'
+  # If true, a random zone will be picked from the list. If false, all zones from this list will blackout.
+  blackout_random_zones: true
+  # Does not work in this release.
+  blackout_random_zones_amount: 1
+  # Zones affected by blackout.
   blackout_zones:
   - Entrance
   - LightContainment
@@ -54,6 +69,5 @@ A plugin for EXILED to create timed blackouts. This is my very first real plugin
 - Random interval for the blackout duration.
 - Random interval for the seconds between each blackout event.
 - Enable/Disable Cassie Broadcast for the blackout event.
-- Enable the use of static zones.
 - Make it possible that more than 1 random zone can be chosen by the plugin (example: Heavy and Light gets chosen randomly).
 - Maybe add some red light before the blackout occurs? idk.
