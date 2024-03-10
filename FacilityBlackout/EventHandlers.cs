@@ -23,6 +23,7 @@ namespace FacilityBlackout
 
         public void OnRoundStarted()
         {
+            _blackoutCount = 0;
             Timing.CallDelayed(FacilityBlackout.Instance.Config.BlackoutStartDelay, () =>
             {
                 Timing.RunCoroutine(BlackoutCoroutine());
