@@ -7,6 +7,8 @@ using Exiled.Events.EventArgs.Map;
 using System.Globalization;
 using MEC;
 using System;
+using UnityEngine;
+using System.Diagnostics.Eventing.Reader;
 
 
 namespace FacilityBlackout
@@ -23,6 +25,37 @@ namespace FacilityBlackout
 
         public void OnRoundStarted()
         {
+            if (FacilityBlackout.Instance.Config.BlackoutRooms)
+            {
+                if (FacilityBlackout.Instance.Config.BlackoutRoomsRandomZones)
+                {
+                    HashSet<ZoneType> chosenZones = new HashSet<ZoneType>();
+                    System.Random random = new System.Random();
+
+                    while (chosenZones.Count < FacilityBlackout.Instance.Config.BlackoutRoomsRandomZonesAmount)
+                    {
+                        ZoneType randomZone = GetRandomZoneExcludingSurface();
+                        chosenZones.Add(randomZone);
+                    }
+
+                    foreach (ZoneType zone in chosenZones)
+                    {
+                        int blackoutRoomsAmount = FacilityBlackout.Instance.Config.BlackoutRoomsAmount; // Move inside the loop
+                        Log.Debug($"Blackouting rooms in zone: {zone} - Amount: {blackoutRoomsAmount}");
+                        BlackoutRoomsInZone(zone, blackoutRoomsAmount);
+                    }
+                }
+                else
+                {
+                    foreach (ZoneType zone in FacilityBlackout.Instance.Config.BlackoutZones)
+                    {
+                        int blackoutRoomsAmount = FacilityBlackout.Instance.Config.BlackoutRoomsAmount; // Move inside the loop
+                        Log.Debug($"Blackouting rooms in zone: {zone} - Amount: {blackoutRoomsAmount}");
+                        BlackoutRoomsInZone(zone, blackoutRoomsAmount);
+                    }
+                }
+            }
+
             _blackoutCount = 0;
             Timing.CallDelayed(FacilityBlackout.Instance.Config.BlackoutStartDelay, () =>
             {
@@ -32,72 +65,116 @@ namespace FacilityBlackout
 
         public void OnDecontamination(DecontaminatingEventArgs ev)
         {
-            FacilityBlackout.Instance.Config.BlackoutZones.Remove(ZoneType.LightContainment);
+            FacilityBlackout.Instance.Config.BlackoutZones.Remove(ZoneType.LightContainment); // Needs to get changed asap. Bad implementation.
         }
 
         public IEnumerator<float> BlackoutCoroutine()
         {
-            while (_blackoutCount <= FacilityBlackout.Instance.Config.BlackoutAmount - 1)
+            while (_blackoutCount <= FacilityBlackout.Instance.Config.BlackoutAmount -1)
             {
-                //yield return Timing.WaitForSeconds(EarlyGameTweaks.Instance.Config.BlackoutStartDelay);
-
-                Random random = new Random();
-
-                int randomAdditionalDelay = random.Next(FacilityBlackout.Instance.Config.BlackoutMinDelay, FacilityBlackout.Instance.Config.BlackoutMaxDelay + 1);
-                int ZoneIndex = 0;
-
-                if (FacilityBlackout.Instance.Config.BlackoutRandomZones)
-                {
-                    ZoneIndex = random.Next(FacilityBlackout.Instance.Config.BlackoutZones.Count);
-                }
-
+                System.Random random = new System.Random();
+                int randomAdditionalDelay = random.Next(FacilityBlackout.Instance.Config.BlackoutMinDelay, FacilityBlackout.Instance.Config.BlackoutMaxDelay);
+                int zoneIndex = FacilityBlackout.Instance.Config.BlackoutRandomZones ? random.Next(FacilityBlackout.Instance.Config.BlackoutZones.Count) : 0;
                 float cassieTime = Cassie.CalculateDuration(FacilityBlackout.Instance.Config.BlackoutCassie, false, 1);
 
                 if (_firstBlackoutFired)
                 {
                     yield return Timing.WaitForSeconds(FacilityBlackout.Instance.Config.BlackoutDelayBetween);
-                    Log.Debug($"Additional Delay: {randomAdditionalDelay} until Blackout");
 
+                    Log.Debug($"Additional Blackouts: Additional Delay: {randomAdditionalDelay} until Blackout");
                     yield return Timing.WaitForSeconds(randomAdditionalDelay);
-                    Cassie.Message(FacilityBlackout.Instance.Config.BlackoutCassie, false, false, true);
 
+                    Cassie.MessageTranslated(FacilityBlackout.Instance.Config.BlackoutCassie, FacilityBlackout.Instance.Config.BlackoutCassieTranslation, false, false, true);
                     yield return Timing.WaitForSeconds(cassieTime);
 
                     if (FacilityBlackout.Instance.Config.BlackoutRandomZones)
                     {
-                        Map.TurnOffAllLights(FacilityBlackout.Instance.Config.BlackoutTime, FacilityBlackout.Instance.Config.BlackoutZones[ZoneIndex]);
+                        TurnOffRandomBlackoutZones();
                     }
                     else
                     {
-                        foreach (ZoneType zoneType in FacilityBlackout.Instance.Config.BlackoutZones)
-                        {
-                            Log.Debug($"Blackout Zone: {zoneType}");
-                            Map.TurnOffAllLights(FacilityBlackout.Instance.Config.BlackoutTime, zoneType);
-                        }
+                        TurnOffAllZones();
                     }
-                    _blackoutCount++;
-                }
-                Log.Debug($"Additional Delay: {randomAdditionalDelay} until Blackout");
-
-                yield return Timing.WaitForSeconds(randomAdditionalDelay);
-                Cassie.Message(FacilityBlackout.Instance.Config.BlackoutCassie, false, false, true);
-
-                yield return Timing.WaitForSeconds(cassieTime);
-
-                if (FacilityBlackout.Instance.Config.BlackoutRandomZones)
-                {
-                    Map.TurnOffAllLights(FacilityBlackout.Instance.Config.BlackoutTime, FacilityBlackout.Instance.Config.BlackoutZones[ZoneIndex]);
                 }
                 else
                 {
-                    foreach (ZoneType zoneType in FacilityBlackout.Instance.Config.BlackoutZones)
+                    Log.Debug($"First Blackout: Additional Delay: {randomAdditionalDelay} until Blackout");
+                    yield return Timing.WaitForSeconds(randomAdditionalDelay);
+
+                    Cassie.MessageTranslated(FacilityBlackout.Instance.Config.BlackoutCassie, FacilityBlackout.Instance.Config.BlackoutCassieTranslation, false, false, true);
+                    yield return Timing.WaitForSeconds(cassieTime);
+
+                    if (FacilityBlackout.Instance.Config.BlackoutRandomZones)
                     {
-                        Log.Debug($"Blackout Zone: {zoneType}");
-                        Map.TurnOffAllLights(FacilityBlackout.Instance.Config.BlackoutTime, zoneType);
+                        TurnOffRandomBlackoutZones();
                     }
+                    else
+                    {
+                        TurnOffAllZones();
+                    }
+                    _firstBlackoutFired = true;
                 }
-                _firstBlackoutFired = true;
+
                 _blackoutCount++;
+            }
+        }
+
+        private void TurnOffRandomBlackoutZones()
+        {
+            if (FacilityBlackout.Instance.Config.BlackoutRandomZonesAmount > 1)
+            {
+                Log.Debug("Multiple random blackout zones detected.");
+
+                HashSet<int> chosenZoneIndices = new HashSet<int>();
+                System.Random random = new System.Random();
+
+                while (chosenZoneIndices.Count < FacilityBlackout.Instance.Config.BlackoutRandomZonesAmount)
+                {
+                    int newIndex = random.Next(FacilityBlackout.Instance.Config.BlackoutZones.Count);
+                    chosenZoneIndices.Add(newIndex);
+                }
+
+                foreach (int zoneIndex in chosenZoneIndices)
+                {
+                    Log.Debug($"Blackout in zone: {FacilityBlackout.Instance.Config.BlackoutZones[zoneIndex]}");
+                    Map.TurnOffAllLights(FacilityBlackout.Instance.Config.BlackoutTime, FacilityBlackout.Instance.Config.BlackoutZones[zoneIndex]);
+                }
+            }
+            else
+            {
+                Log.Debug("Only one random blackout zone detected.");
+                System.Random random = new System.Random();
+                int randomIndex = random.Next(FacilityBlackout.Instance.Config.BlackoutZones.Count);
+                Log.Debug($"Blackout is in zone: {FacilityBlackout.Instance.Config.BlackoutZones[randomIndex]}");
+                Map.TurnOffAllLights(FacilityBlackout.Instance.Config.BlackoutTime, FacilityBlackout.Instance.Config.BlackoutZones[randomIndex]);
+            }
+        }
+
+        private void TurnOffAllZones()
+        {
+            foreach (ZoneType zoneType in FacilityBlackout.Instance.Config.BlackoutZones)
+            {
+                Log.Debug($"Blackout Zone: {zoneType}");
+                Map.TurnOffAllLights(FacilityBlackout.Instance.Config.BlackoutTime, zoneType);
+            }
+        }
+
+        private ZoneType GetRandomZoneExcludingSurface()
+        {
+            ZoneType randomZone;
+            do
+            {
+                randomZone = (ZoneType)UnityEngine.Random.Range(1, Enum.GetValues(typeof(ZoneType)).Length); // Exclude SurfaceZone
+            } while (randomZone == ZoneType.Surface);
+
+            return randomZone;
+        }
+
+        private void BlackoutRoomsInZone(ZoneType zone, int amount)
+        {
+            foreach (Room room in RoomManager.GetRandomRoomsInZone(zone, amount))
+            {
+                room.Blackout(-1, DoorLockType.None);
             }
         }
     }
