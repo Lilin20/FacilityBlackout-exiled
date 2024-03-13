@@ -39,8 +39,8 @@ namespace FacilityBlackout
         [Description("If true, a random zone will be picked from the list. If false, all zones from this list will blackout.")]
         public bool BlackoutRandomZones { get; set; } = true; // If true, all zones from BlackoutZones will be used for random selection. If false, all zones in list will blackout.
 
-        [Description("Does not work in this release.")]
-        public int BlackoutRandomZonesAmount { get; set; } = 1; // How many random zones will be affected when a blackout hits -> NOT IMPLEMENTED FULLY. NEEDS TESTING.
+        [Description("Amount of random zones for each full zone blackout.")]
+        public int BlackoutRandomZonesAmount { get; set; } = 1;
 
         [Description("Zones affected by blackout.")]
         public List<ZoneType> BlackoutZones { get; set; } = new List<ZoneType> { ZoneType.Entrance, ZoneType.LightContainment, ZoneType.HeavyContainment, ZoneType.Surface };

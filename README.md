@@ -22,7 +22,7 @@ A plugin for EXILED to create timed blackouts. This is my very first real plugin
 | BlackoutTime | integer | 20 | Duration of each blackout event. |
 | BlackoutCassie | string | "LIGHT SYSTEM MALFUNCTION . REPAIRING SYSTEMS" | Cassie announcement during blackout. |
 | BlackoutRandomZones | bool | true | If true, a random zone will be picked from the list. If false, all zones from this list will blackout. |
-| BlackoutRandomZonesAmount | int | 1 | Does not work in this release. |
+| BlackoutRandomZonesAmount | int | 1 | Amount of random zones for each full zone blackout. |
 | BlackoutZones | list | Entrance, LightContainment, HeavyContainment, Surface | Zones affected by blackout. |
 | BlackoutRoom | bool | false | Enables the blackout functionality for rooms at round start. | 
 | BlackoutRoomsAmount | int | 3 | Amount of rooms to be blacked out at round start. |
