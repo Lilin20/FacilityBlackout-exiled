@@ -23,6 +23,12 @@ namespace FacilityBlackout
             return Cassie.IsSpeaking;
         }
 
+        public DateTime GetTimestamp()
+        {
+            DateTime currentTime = DateTime.Now;
+            return currentTime.ToUniversalTime();
+        }
+
         public void OnRoundStarted()
         {
             if (FacilityBlackout.Instance.Config.BlackoutRooms)
@@ -57,6 +63,7 @@ namespace FacilityBlackout
             }
 
             _blackoutCount = 0;
+            Log.Debug($"Waiting initial delay before blackout coroutine starts... {FacilityBlackout.Instance.Config.BlackoutStartDelay}");
             Timing.CallDelayed(FacilityBlackout.Instance.Config.BlackoutStartDelay, () =>
             {
                 Timing.RunCoroutine(BlackoutCoroutine());
@@ -70,6 +77,7 @@ namespace FacilityBlackout
 
         public IEnumerator<float> BlackoutCoroutine()
         {
+            Log.Debug($"Waiting for initial delay ended. Running coroutine...");
             while (_blackoutCount <= FacilityBlackout.Instance.Config.BlackoutAmount -1)
             {
                 System.Random random = new System.Random();
@@ -79,7 +87,9 @@ namespace FacilityBlackout
 
                 if (_firstBlackoutFired)
                 {
+                    Log.Debug("Delaying additional blackout using the BlackoutDelayBetween config element.");
                     yield return Timing.WaitForSeconds(FacilityBlackout.Instance.Config.BlackoutDelayBetween);
+                    Log.Debug($"Waited for {FacilityBlackout.Instance.Config.BlackoutDelayBetween} seconds... Proceeding with next random blackout delay...");
 
                     Log.Debug($"Additional Blackouts: Additional Delay: {randomAdditionalDelay} until Blackout");
                     yield return Timing.WaitForSeconds(randomAdditionalDelay);
