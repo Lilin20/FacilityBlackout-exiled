@@ -2,6 +2,7 @@
 using Exiled.API.Features;
 using Exiled;
 using System;
+using Exiled.API.Features.Core.Generic;
 
 namespace FacilityBlackout
 {
@@ -13,6 +14,7 @@ namespace FacilityBlackout
         public override Version RequiredExiledVersion => new Version(8, 8, 0);
         public override string Prefix { get; } = "FacilityBlackout";
         public override PluginPriority Priority { get; } = PluginPriority.Default;
+        public static FacilityBlackout Singleton;
 
 
 
@@ -22,6 +24,7 @@ namespace FacilityBlackout
 
         public override void OnEnabled()
         {
+            Singleton = this;
             EventHandlers = new EventHandlers();
 
             Exiled.Events.Handlers.Server.RoundStarted += EventHandlers.OnRoundStarted;
@@ -38,6 +41,7 @@ namespace FacilityBlackout
             EventHandlers = null;
 
             base.OnDisabled();
+            Singleton = null;
         }
     }
 }
