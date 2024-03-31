@@ -18,6 +18,8 @@ namespace FacilityBlackout
         private readonly Config _config;
         private int _blackoutCount = 0;
         private bool _firstBlackoutFired = false;
+        private CoroutineHandle _coroutine;
+
         public bool CheckCassieSpeaking()
         {
             return Cassie.IsSpeaking;
@@ -27,6 +29,12 @@ namespace FacilityBlackout
         {
             DateTime currentTime = DateTime.Now;
             return currentTime.ToUniversalTime();
+        }
+
+        public void OnRoundRestart()
+        {
+            Log.Debug("Killing coroutine...");
+            Timing.KillCoroutines(_coroutine);
         }
 
         public void OnRoundStarted()
@@ -66,7 +74,7 @@ namespace FacilityBlackout
             Log.Debug($"Waiting initial delay before blackout coroutine starts... {FacilityBlackout.Singleton.Config.BlackoutStartDelay}");
             Timing.CallDelayed(FacilityBlackout.Singleton.Config.BlackoutStartDelay, () =>
             {
-                Timing.RunCoroutine(BlackoutCoroutine());
+                _coroutine = Timing.RunCoroutine(BlackoutCoroutine());
             });
         }
 

@@ -29,6 +29,7 @@ namespace FacilityBlackout
 
             Exiled.Events.Handlers.Server.RoundStarted += EventHandlers.OnRoundStarted;
             Exiled.Events.Handlers.Map.Decontaminating += EventHandlers.OnDecontamination;
+            Exiled.Events.Handlers.Server.RestartingRound += EventHandlers.OnRoundRestart;
 
             base.OnEnabled();
         }
