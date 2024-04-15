@@ -11,7 +11,7 @@ namespace FacilityBlackout
         public override string Name { get; } = "Facility Blackout";
         public override string Author { get; } = "Lilin";
         public override Version Version { get; } = new Version(1, 0, 5);
-        public override Version RequiredExiledVersion => new Version(8, 8, 0);
+        public override Version RequiredExiledVersion => new Version(8, 8, 1);
         public override string Prefix { get; } = "FacilityBlackout";
         public override PluginPriority Priority { get; } = PluginPriority.Default;
         public static FacilityBlackout Singleton;
