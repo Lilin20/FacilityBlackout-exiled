@@ -28,6 +28,9 @@ A plugin for EXILED to create timed blackouts. This is my very first real plugin
 | BlackoutRoomsAmount | int | 3 | Amount of rooms to be blacked out at round start. |
 | BlackoutRoomsRandomZones | bool | false | Enables random zones for rooms. Takes BlackoutZones to get random zones to fetch rooms. |
 | BlackoutRoomsRandomZonesAmount | int | 1 | Amount of random zones for random blacked out rooms. |
+| BlackoutOnRoundStart | bool | false | Enables the blackout on round start functionality. |
+| BlackoutZonesOnRoundStart | list | Entrance, LightContainment, HeavyContainment, Surface | Zones affected by round start blackout. |
+| BlackoutOnRoundStartDuration | int | 15 | Duration of the blackout at round start. |
 
 # Config Example
 ```yml
