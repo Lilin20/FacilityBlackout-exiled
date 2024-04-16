@@ -39,6 +39,7 @@ namespace FacilityBlackout
 
         public void OnRoundStarted()
         {
+            Log.Debug("Detected a round start... Trying to execute OnRoundStarted function...");
             if (FacilityBlackout.Instance.Config.BlackoutRooms)
             {
                 if (FacilityBlackout.Instance.Config.BlackoutRoomsRandomZones)
@@ -141,6 +142,7 @@ namespace FacilityBlackout
 
         private void TurnOffRandomBlackoutZones()
         {
+            Log.Debug("Trying to execute TurnOffRandomBlackoutZones...");
             if (FacilityBlackout.Singleton.Config.BlackoutRandomZonesAmount > 1)
             {
                 Log.Debug("Multiple random blackout zones detected.");
@@ -172,6 +174,7 @@ namespace FacilityBlackout
 
         private void TurnOffAllZones()
         {
+            Log.Debug("Trying to execute function TurnOffAllZones...");
             foreach (ZoneType zoneType in FacilityBlackout.Singleton.Config.BlackoutZones)
             {
                 Log.Debug($"Blackout Zone: {zoneType}");
@@ -192,6 +195,7 @@ namespace FacilityBlackout
 
         private void BlackoutRoomsInZone(ZoneType zone, int amount)
         {
+            Log.Debug("Trying to execute function BlackoutRoomsInZone...");
             foreach (Room room in RoomManager.GetRandomRoomsInZone(zone, amount))
             {
                 room.Blackout(-1, DoorLockType.None);

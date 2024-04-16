@@ -10,10 +10,9 @@ namespace FacilityBlackout
     {
         public override string Name { get; } = "Facility Blackout";
         public override string Author { get; } = "Lilin";
-        public override Version Version { get; } = new Version(1, 0, 6);
-        public override Version RequiredExiledVersion => new Version(8, 8, 1);
+        public override Version Version { get; } = new Version(1, 0, 7);
         public override string Prefix { get; } = "FacilityBlackout";
-        public override PluginPriority Priority { get; } = PluginPriority.Default;
+        public override PluginPriority Priority { get; } = PluginPriority.High;
         public static FacilityBlackout Singleton;
 
 
@@ -27,9 +26,13 @@ namespace FacilityBlackout
             Singleton = this;
             EventHandlers = new EventHandlers();
 
+            Log.Debug("Loaded succesfully... Registering EventHandlers...");
+
             Exiled.Events.Handlers.Server.RoundStarted += EventHandlers.OnRoundStarted;
             Exiled.Events.Handlers.Map.Decontaminating += EventHandlers.OnDecontamination;
             Exiled.Events.Handlers.Server.RestartingRound += EventHandlers.OnRoundRestart;
+
+            Log.Debug("Done.");
 
             base.OnEnabled();
         }
@@ -38,11 +41,12 @@ namespace FacilityBlackout
         {
             Exiled.Events.Handlers.Server.RoundStarted -= EventHandlers.OnRoundStarted;
             Exiled.Events.Handlers.Map.Decontaminating -= EventHandlers.OnDecontamination;
+            Exiled.Events.Handlers.Server.RestartingRound -= EventHandlers.OnRoundRestart;
 
             EventHandlers = null;
+            Singleton = null;
 
             base.OnDisabled();
-            Singleton = null;
         }
     }
 }
