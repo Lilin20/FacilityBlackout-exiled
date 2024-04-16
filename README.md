@@ -65,6 +65,13 @@ facility_blackout:
   blackout_rooms_amount: 3
   blackout_rooms_random_zones: true
   blackout_rooms_random_zones_amount: 2
+  # Enables blacked out zones at round start.
+  blackout_on_round_start: true
+  blackout_zones_on_round_start:
+  - LightContainment
+  - HeavyContainment
+  - Surface
+  blackout_on_round_start_duration: 60
 ```
 # How does it work now?
 - At the start of a round, the plugin first waits. The amount of time you have to wait depends on the "blackout_start_delay" value.
