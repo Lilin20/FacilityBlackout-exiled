@@ -37,6 +37,8 @@ A plugin for EXILED to create timed blackouts. This is my very first real plugin
 facility_blackout:
   is_enabled: true
   debug: false
+  # Enables the random blackout functionality
+  blackout_enabled: false
   # Number of total blackouts per round.
   blackout_amount: 5
   # Additional delay between each blackout.
@@ -65,13 +67,14 @@ facility_blackout:
   blackout_rooms_amount: 3
   blackout_rooms_random_zones: true
   blackout_rooms_random_zones_amount: 2
-  # Enables blacked out zones at round start.
-  blackout_on_round_start: true
+  # Enables blacked out zones at round start. Make sure to check blackout_rooms. It could happen that they "collide" with each other. Needs a fix (maybe idk)
+  blackout_on_round_start: false
   blackout_zones_on_round_start:
+  - Entrance
   - LightContainment
   - HeavyContainment
   - Surface
-  blackout_on_round_start_duration: 60
+  blackout_on_round_start_duration: 15
 ```
 # How does it work now?
 - At the start of a round, the plugin first waits. The amount of time you have to wait depends on the "blackout_start_delay" value.
