@@ -12,6 +12,8 @@ namespace FacilityBlackout
 
         public bool Debug { get; set; } = false;
 
+        public bool BlackoutEnabled { get; set; } = true;
+
         [Description("Number of total blackouts per round.")]
         public int BlackoutAmount { get; set; } = 5;
 
@@ -45,6 +47,7 @@ namespace FacilityBlackout
         [Description("Zones affected by blackout.")]
         public List<ZoneType> BlackoutZones { get; set; } = new List<ZoneType> { ZoneType.Entrance, ZoneType.LightContainment, ZoneType.HeavyContainment, ZoneType.Surface };
 
+        [Description("Enables random rooms to be blacked out at round start.")]
         public bool BlackoutRooms { get; set; } = false;
 
         public int BlackoutRoomsAmount { get; set; } = 3;
@@ -53,6 +56,11 @@ namespace FacilityBlackout
 
         public int BlackoutRoomsRandomZonesAmount { get; set; } = 1;
 
+        [Description("Enables blacked out zones at round start.")]
+        public bool BlackoutOnRoundStart { get; set; } = false;
 
+        public List<ZoneType> BlackoutZonesOnRoundStart { get; set; } = new List<ZoneType> { ZoneType.Entrance, ZoneType.LightContainment, ZoneType.HeavyContainment, ZoneType.Surface };
+
+        public int BlackoutOnRoundStartDuration { get; set; } = 15;
     }
 }

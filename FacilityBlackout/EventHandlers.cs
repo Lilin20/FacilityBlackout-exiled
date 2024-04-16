@@ -40,9 +40,21 @@ namespace FacilityBlackout
         public void OnRoundStarted()
         {
             Log.Debug("Detected a round start... Trying to execute OnRoundStarted function...");
-            if (FacilityBlackout.Instance.Config.BlackoutRooms)
+
+            if (FacilityBlackout.Singleton.Config.BlackoutOnRoundStart)
             {
-                if (FacilityBlackout.Instance.Config.BlackoutRoomsRandomZones)
+                foreach (ZoneType zone in FacilityBlackout.Singleton.Config.BlackoutZonesOnRoundStart)
+                {
+                    Map.TurnOffAllLights(FacilityBlackout.Singleton.Config.BlackoutOnRoundStartDuration, zone);
+                }
+            }
+
+            if (!FacilityBlackout.Singleton.Config.BlackoutEnabled)
+                return;
+
+            if (FacilityBlackout.Singleton.Config.BlackoutRooms)
+            {
+                if (FacilityBlackout.Singleton.Config.BlackoutRoomsRandomZones)
                 {
                     HashSet<ZoneType> chosenZones = new HashSet<ZoneType>();
                     System.Random random = new System.Random();
@@ -81,6 +93,8 @@ namespace FacilityBlackout
 
         public void OnDecontamination(DecontaminatingEventArgs ev)
         {
+            if (!FacilityBlackout.Singleton.Config.BlackoutEnabled)
+                return;
             FacilityBlackout.Singleton.Config.BlackoutZones.Remove(ZoneType.LightContainment); // Needs to get changed asap. Bad implementation.
         }
 
@@ -143,6 +157,8 @@ namespace FacilityBlackout
         private void TurnOffRandomBlackoutZones()
         {
             Log.Debug("Trying to execute TurnOffRandomBlackoutZones...");
+            if (!FacilityBlackout.Singleton.Config.BlackoutEnabled)
+                return;
             if (FacilityBlackout.Singleton.Config.BlackoutRandomZonesAmount > 1)
             {
                 Log.Debug("Multiple random blackout zones detected.");
@@ -175,6 +191,8 @@ namespace FacilityBlackout
         private void TurnOffAllZones()
         {
             Log.Debug("Trying to execute function TurnOffAllZones...");
+            if (!FacilityBlackout.Singleton.Config.BlackoutEnabled)
+                return;
             foreach (ZoneType zoneType in FacilityBlackout.Singleton.Config.BlackoutZones)
             {
                 Log.Debug($"Blackout Zone: {zoneType}");
