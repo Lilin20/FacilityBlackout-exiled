@@ -14,6 +14,7 @@ A plugin for EXILED to create timed blackouts. This is my very first real plugin
 | :---------------- | :------: | :----: | -----: |
 | IsEnabled | bool | true | Enable / Disable plugin. |
 | Debug | bool | true | Enable debugging. |
+| BlackoutEnabled | bool | true | Enables random blackout functionality. |
 | BlackoutAmount | integer | 3 | Number of total blackouts per round. |
 | BlackoutDelayBetween | integer | 120 | Additional delay between each blackout. |
 | BlackoutStartDelay | integer | 300 | Delay before the first blackout occurs. |
